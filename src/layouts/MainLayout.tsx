@@ -1,11 +1,11 @@
 import { Toaster } from "react-hot-toast";
 import React from "react";
+import { Outlet } from "react-router";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+const MainLayout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <main className="p-4">{children}</main>
-
+    <div>
+      <Outlet />
       <Toaster
         position="top-right"
         toastOptions={{
