@@ -7,22 +7,40 @@ import { ErrorFallback } from '@/components/error-fallback'
 import { AddAuthorForm } from '@/features/author/AddAuthorForm'
 import type { Author } from '@/lib/types/Author'
 import { useQueryClient } from '@tanstack/react-query'
-import { Edit, Images, Trash2, Upload, X } from 'lucide-react'
+import { Edit, Images, Trash2, Type, Upload, X } from 'lucide-react'
 import { useMemo, useRef, useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import toast from 'react-hot-toast'
 import { ACCEPTED_IMAGE_TYPES } from '@/lib/constants'
+import FormField from '@/components/form-field'
+import { useForm } from 'react-hook-form'
+import { AuthorSchema } from '@/lib/schema/AuthorSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import type { z } from 'zod'
+import { SubmitButton } from '@/components/submit-button'
 
 export const AuthorPage = () => {
   const queryClient = useQueryClient()
   const { data, isLoading } = useGetAuthors()
   const [editingAuthor, setEditingAuthor] = useState<Author | null>(null)
-  const [editName, setEditName] = useState('')
-  const [editBio, setEditBio] = useState('')
   const [editImageUrl, setEditImageUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const updateMutation = useUpdateAuthor()
+
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm<z.infer<typeof AuthorSchema>>({
+    resolver: zodResolver(AuthorSchema),
+    defaultValues: {
+      name: '',
+      avatar: null,
+      bio: '',
+    },
+  })
 
   const authors = useMemo(() => {
     return data || []
@@ -56,16 +74,17 @@ export const AuthorPage = () => {
 
   const handleEdit = (author: Author) => {
     setEditingAuthor(author)
-    setEditName(author.name)
-    setEditBio(author.bio || '')
+    reset({
+      name: author.name,
+      bio: author.bio || '',
+      avatar: null,
+    })
     setEditImageUrl(author.avatar || null)
 
-    // Reset file input if it exists
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
-
   const handleCancelEdit = () => {
     // Clean up any object URL if it exists
     if (editImageUrl && !editImageUrl.startsWith('http')) {
@@ -73,20 +92,18 @@ export const AuthorPage = () => {
     }
 
     setEditingAuthor(null)
-    setEditName('')
-    setEditBio('')
     setEditImageUrl(null)
   }
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = async (data: z.infer<typeof AuthorSchema>) => {
     if (!editingAuthor) return
 
     toast.promise(
       updateMutation.mutateAsync(
         {
           id: editingAuthor.id,
-          name: editName,
-          bio: editBio,
+          name: data.name,
+          bio: data.bio,
           avatar: editImageUrl,
         },
         {
@@ -99,8 +116,6 @@ export const AuthorPage = () => {
             }
 
             setEditingAuthor(null)
-            setEditName('')
-            setEditBio('')
             setEditImageUrl(null)
           },
         }
@@ -185,100 +200,114 @@ export const AuthorPage = () => {
               {authors.map((author: Author) => (
                 <li key={author.id} className="py-4">
                   {editingAuthor && editingAuthor.id === author.id ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center">
-                        <label className="w-20 font-medium text-gray-700">
-                          Name:
-                        </label>
-                        <input
-                          type="text"
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          className="flex-1 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-                          autoFocus
+                    <form
+                      onSubmit={handleSubmit(handleSaveEdit)}
+                      className="space-y-4"
+                    >
+                      <div className="w-full space-y-4">
+                        <FormField
+                          label="name"
+                          id="name"
+                          register={register('name')}
+                          error={errors.name}
+                          Icon={Type}
                         />
-                      </div>
-                      <div>
-                        <label className="mb-2 flex items-center gap-2 font-medium text-gray-700">
-                          <Images
-                            className="h-5 w-5 text-gray-500"
-                            aria-hidden="true"
-                          />
-                          Avatar Image
-                        </label>
-
-                        {editImageUrl ? (
-                          <div className="group relative mb-4 overflow-hidden rounded-lg shadow-md">
-                            <img
-                              src={editImageUrl}
-                              alt="Avatar Preview"
-                              className="h-48 w-full object-cover"
-                              loading="lazy"
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 font-medium text-gray-700">
+                            <Images
+                              className="h-5 w-5 text-gray-500"
+                              aria-hidden="true"
                             />
-                            <button
-                              type="button"
-                              className="bg-opacity-60 hover:bg-opacity-80 absolute top-2 right-2 rounded-full bg-black p-1 text-white transition-all"
-                              onClick={removeImage}
-                              aria-label="Remove image"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <label
-                            htmlFor="edit-image-upload"
-                            className="mb-4 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 transition-all hover:border-blue-500 hover:bg-blue-50"
-                          >
-                            <div className="flex flex-col items-center justify-center">
-                              <div className="mb-3 rounded-full bg-indigo-100 p-3">
-                                <Upload className="h-6 w-6 text-indigo-600" />
-                              </div>
-                              <p className="mb-1 text-sm font-medium text-gray-700">
-                                Click or drag file to upload
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                Supports JPG, PNG, WEBP (Max 1MB)
-                              </p>
-                            </div>
-                            <input
-                              id="edit-image-upload"
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              onChange={handleImageChange}
-                              ref={fileInputRef}
-                              className="sr-only"
-                            />
+                            Avatar Image
                           </label>
-                        )}
+
+                          {editImageUrl ? (
+                            <div className="group relative mb-4 overflow-hidden rounded-lg shadow-md">
+                              <img
+                                src={editImageUrl}
+                                alt="Avatar Preview"
+                                className="h-48 w-full object-cover"
+                                loading="lazy"
+                              />
+                              <button
+                                type="button"
+                                className="bg-opacity-60 hover:bg-opacity-80 absolute top-2 right-2 rounded-full bg-black p-1 text-white transition-all"
+                                onClick={removeImage}
+                                aria-label="Remove image"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <label
+                              htmlFor="edit-image-upload"
+                              className="mb-4 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 transition-all hover:border-blue-500 hover:bg-blue-50"
+                            >
+                              <div className="flex flex-col items-center justify-center">
+                                <div className="mb-3 rounded-full bg-indigo-100 p-3">
+                                  <Upload className="h-6 w-6 text-indigo-600" />
+                                </div>
+                                <p className="mb-1 text-sm font-medium text-gray-700">
+                                  Click or drag file to upload
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Supports JPG, PNG, WEBP (Max 1MB)
+                                </p>
+                              </div>
+                              <input
+                                id="edit-image-upload"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={handleImageChange}
+                                ref={fileInputRef}
+                                className="sr-only"
+                              />
+                            </label>
+                          )}
+                          {errors.avatar && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {errors.avatar.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex">
+                          <label className="w-20 font-medium text-gray-700">
+                            Bio:
+                          </label>
+                          <div className="flex-1">
+                            <textarea
+                              {...register('bio')}
+                              rows={3}
+                              className={`w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none ${
+                                errors.bio
+                                  ? 'border-red-500'
+                                  : 'border-gray-300'
+                              }`}
+                            />
+                            {errors.bio && (
+                              <p className="mt-1 text-sm text-red-600">
+                                {errors.bio.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2 pt-2">
+                          <SubmitButton
+                            pending={updateMutation.isPending}
+                            pendingText="Updating..."
+                          >
+                            Update
+                          </SubmitButton>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="rounded bg-gray-300 px-4 py-2 text-sm hover:bg-gray-400"
+                            disabled={updateMutation.isPending}
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex">
-                        <label className="w-20 font-medium text-gray-700">
-                          Bio:
-                        </label>
-                        <textarea
-                          value={editBio}
-                          onChange={(e) => setEditBio(e.target.value)}
-                          rows={3}
-                          className="flex-1 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-                        />
-                      </div>
-                      <div className="flex justify-end space-x-2 pt-2">
-                        <button
-                          onClick={handleSaveEdit}
-                          className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
-                          disabled={updateMutation.isPending}
-                        >
-                          {updateMutation.isPending ? 'Saving...' : 'Save'}
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="rounded bg-gray-300 px-4 py-2 text-sm hover:bg-gray-400"
-                          disabled={updateMutation.isPending}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
+                    </form>
                   ) : (
                     <div className="flex items-center">
                       <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full">

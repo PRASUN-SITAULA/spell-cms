@@ -2,16 +2,20 @@
   "posts": [],
   "categories": [
     {
-      "title": "Technologyss",
+      "title": "Technology",
       "id": 1
+    },
+    {
+      "title": "React",
+      "id": 2
     }
   ],
   "authors": [
     {
-      "name": "Prasun Sitaula",
-      "avatar": "blob:http://localhost:5173/6a1a2563-d5c2-4b96-b946-556a3360a74a",
-      "bio": "I am prasun sitaula",
-      "id": 2
+      "name": "Rajendra",
+      "bio": "Rajendra from UP and bardiya(formerly part of UP)",
+      "id": 1,
+      "avatar": null
     }
   ]
 }
