@@ -25,7 +25,6 @@ export const AddCategoryForm = () => {
   const mutation = useCreateCategory()
 
   const onSubmit = (data: z.infer<typeof CategorySchema>) => {
-    console.log('Form submitted with data:', data)
     mutation.mutate(data, {
       onSuccess: () => {
         toast.success('Category created successfully!')
