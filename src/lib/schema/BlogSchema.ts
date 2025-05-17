@@ -5,7 +5,10 @@ export const BlogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().min(10, 'Body must be at least 10 characters'),
   authorId: z.string().min(1, 'Author is required'),
-  category: z.string().min(1, 'Category is required'),
+  categoryId: z.string().min(1, 'Category is required'),
+  status: z.enum(['Draft', 'Published'], {
+    required_error: 'Please select a status',
+  }),
   tags: z.array(z.string()),
   coverImage: z
     .custom<File | null | undefined>()

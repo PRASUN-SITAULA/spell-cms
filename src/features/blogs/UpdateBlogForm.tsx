@@ -23,15 +23,23 @@ import { useGetCategories } from '@/api/categories/hooks'
 import type { Category } from '@/lib/types/Category'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
-import { useCreateBlog } from '@/api/blogs/hooks'
+import { useUpdateBlog } from '@/api/blogs/hooks'
 import { useNavigate } from 'react-router'
+import type { Blog } from '@/lib/types/Blog'
 import MDEditor from '@uiw/react-md-editor'
 
-export default function AddBlogPostForm() {
+export default function UpdateBlogPostForm({
+  blog,
+  handleCancelEdit,
+}: {
+  blog: Blog
+  handleCancelEdit: () => void
+}) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const mutation = useCreateBlog()
+  const mutation = useUpdateBlog()
+
   const { data: authorsData, isLoading: authorsLoading } = useGetAuthors()
   const authors = useMemo(() => {
     return authorsData || []
@@ -58,12 +66,12 @@ export default function AddBlogPostForm() {
   } = useForm<z.infer<typeof BlogSchema>>({
     resolver: zodResolver(BlogSchema),
     defaultValues: {
-      title: '',
-      body: '',
-      authorId: '',
-      categoryId: '',
-      status: 'Draft',
-      tags: [],
+      title: blog.title,
+      body: blog.body,
+      authorId: String(blog.author.id),
+      categoryId: String(blog.category.id),
+      status: blog.status,
+      tags: blog.tags,
       coverImage: null,
     },
   })
@@ -128,12 +136,12 @@ export default function AddBlogPostForm() {
 
     const previewUrl = URL.createObjectURL(file)
     setImageUrl(previewUrl)
-
-    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const removeImage = () => {
-    if (imageUrl) URL.revokeObjectURL(imageUrl)
+    if (imageUrl && imageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imageUrl)
+    }
     setImageUrl(null)
     setValue('coverImage', null, { shouldValidate: true })
     if (fileInputRef.current) fileInputRef.current.value = ''
@@ -142,13 +150,13 @@ export default function AddBlogPostForm() {
   // Handle form submission
   const onSubmit = (data: z.infer<typeof BlogSchema>) => {
     const mutationData = {
+      id: blog.id,
       title: data.title,
       authorId: data.authorId,
+      body: data.body,
       categoryId: data.categoryId,
       tags: data.tags,
-      body: data.body,
       status: data.status,
-      createdAt: new Date(),
       coverImageUrl: imageUrl,
     }
 
@@ -164,7 +172,6 @@ export default function AddBlogPostForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        {/* Left column - Main content */}
         <div className="space-y-6">
           <FormField
             label="Blog Title"
@@ -173,7 +180,6 @@ export default function AddBlogPostForm() {
             error={errors.title}
             Icon={Type}
           />
-
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
               <FileText className="h-5 w-5 text-gray-500" aria-hidden="true" />
@@ -208,6 +214,7 @@ export default function AddBlogPostForm() {
               <select
                 id="authorId"
                 {...register('authorId')}
+                value={watchedFields.authorId || ''}
                 className={`mt-1 block w-full rounded-lg border px-4 py-2.5 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none ${
                   errors.authorId ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -215,7 +222,7 @@ export default function AddBlogPostForm() {
               >
                 <option value="">Select Author</option>
                 {authors.map((author: Author) => (
-                  <option key={author.id} value={author.id}>
+                  <option key={author.id} value={String(author.id)}>
                     {author.name}
                   </option>
                 ))}
@@ -241,6 +248,7 @@ export default function AddBlogPostForm() {
               <select
                 id="categoryId"
                 {...register('categoryId')}
+                value={watchedFields.categoryId || ''}
                 className={`mt-1 block w-full rounded-lg border px-4 py-2.5 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none ${
                   errors.categoryId ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -248,7 +256,7 @@ export default function AddBlogPostForm() {
               >
                 <option value="">Select Category</option>
                 {categories.map((category: Category) => (
-                  <option key={category.id} value={category.id}>
+                  <option key={category.id} value={String(category.id)}>
                     {category.title}
                   </option>
                 ))}
@@ -404,8 +412,15 @@ export default function AddBlogPostForm() {
       </div>
 
       <div className="mt-2 flex justify-end border-t border-gray-200 pt-6">
-        <SubmitButton pending={mutation.isPending} pendingText="Creating ...">
-          Create Blog Post
+        <button
+          type="button"
+          onClick={handleCancelEdit}
+          className="mr-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <SubmitButton pending={mutation.isPending} pendingText="Updating...">
+          Update Blog Post
         </SubmitButton>
       </div>
     </form>

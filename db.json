@@ -1,5 +1,26 @@
 {
-  "posts": [],
+  "posts": [
+    {
+      "title": "First Blog",
+      "authorId": "1",
+      "categoryId": "2",
+      "tags": ["frontend", "typescript"],
+      "body": "This is my first Blog about react. React is a JS library.",
+      "status": "Draft",
+      "createdAt": "2025-05-17T14:03:46.312Z",
+      "id": 1
+    },
+    {
+      "title": "Published Draft",
+      "authorId": "1",
+      "categoryId": "1",
+      "tags": ["pub"],
+      "body": "This is a published draft",
+      "status": "Published",
+      "createdAt": "2025-05-17T14:27:31.064Z",
+      "id": 2
+    }
+  ],
   "categories": [
     {
       "title": "Technology",
@@ -12,10 +33,9 @@
   ],
   "authors": [
     {
-      "name": "Rajendra",
-      "bio": "Rajendra from UP and bardiya(formerly part of UP)",
-      "id": 1,
-      "avatar": null
+      "name": "Prasun Sitaula",
+      "bio": "Interested in Software Development",
+      "id": 1
     }
   ]
 }
