@@ -1,16 +1,16 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface User {
-  email: string;
+  email: string
 }
 
 interface AuthState {
-  token: string | null;
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  token: string | null
+  user: User | null
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => void
 }
 
 const useAuthStore = create<AuthState>()(
@@ -20,43 +20,43 @@ const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       login: async (email, password) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500))
 
         if (!email || !password) {
-          throw new Error("Email and password are required");
+          throw new Error('Email and password are required')
         }
 
-        if (email === "mock@example.com" && password === "password123") {
-          const mockToken = "mock-jwt-token";
-          const mockUser = { email };
+        if (email === 'mock@example.com' && password === 'password123') {
+          const mockToken = 'mock-jwt-token'
+          const mockUser = { email }
 
           set({
             token: mockToken,
             user: mockUser,
             isAuthenticated: true,
-          });
+          })
 
-          return true;
+          return true
         }
-        return false;
+        return false
       },
       logout: () => {
-        set({ token: null, user: null, isAuthenticated: false });
+        set({ token: null, user: null, isAuthenticated: false })
       },
     }),
     {
-      name: "auth-storage",
+      name: 'auth-storage',
       storage: {
         getItem: (name) => {
-          const value = localStorage.getItem(name);
-          return value ? JSON.parse(value) : null;
+          const value = localStorage.getItem(name)
+          return value ? JSON.parse(value) : null
         },
         setItem: (name, value) =>
           localStorage.setItem(name, JSON.stringify(value)),
         removeItem: (name) => localStorage.removeItem(name),
       },
-    },
-  ),
-);
+    }
+  )
+)
 
-export default useAuthStore;
+export default useAuthStore
