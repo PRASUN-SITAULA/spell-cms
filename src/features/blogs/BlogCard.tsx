@@ -85,7 +85,7 @@ export default function BlogCard() {
                     className="rounded p-1 transition-colors duration-200 hover:bg-gray-200"
                     title="Edit"
                   >
-                    <Edit className="h-5 w-5 text-gray-600" />
+                    <Edit className="h-5 w-5 text-purple-600" />
                   </button>
                   <button
                     className="rounded p-1 transition-colors duration-200 hover:bg-red-100"
