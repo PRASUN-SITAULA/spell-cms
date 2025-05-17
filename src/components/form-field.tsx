@@ -24,7 +24,7 @@ const FormField: React.FC<FormFieldProps> = ({
     <div>
       <label
         htmlFor={id}
-        className="jtext-sm flex items-center gap-2 font-medium text-gray-700"
+        className="flex items-center gap-2 text-sm font-medium text-gray-700"
       >
         {Icon && <Icon className="h-5 w-5 text-gray-400" aria-hidden="true" />}
         {label}
