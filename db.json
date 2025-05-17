@@ -1,28 +1,21 @@
 {
-  "posts": [
-    {
-      "id": 1,
-      "title": "My First Blog Post",
-      "body": "This is the content of my first blog post.",
-      "authorId": 1,
-      "categoryId": 1,
-      "tags": ["tech", "news"],
-      "status": "published",
-      "createdAt": "2023-05-15T10:30:00Z"
-    }
-  ],
+  "posts": [],
   "categories": [
     {
-      "title": "Technologyss",
+      "title": "Technology",
       "id": 1
+    },
+    {
+      "title": "React",
+      "id": 2
     }
   ],
   "authors": [
     {
+      "name": "Rajendra",
+      "bio": "Rajendra from UP and bardiya(formerly part of UP)",
       "id": 1,
-      "name": "John Doe",
-      "avatar": "url_to_avatar_image",
-      "bio": "A passionate writer."
+      "avatar": null
     }
   ]
 }

@@ -6,6 +6,7 @@ import MainLayout from './layouts/MainLayout'
 import { Dashboard } from './pages/dashboard/Dashboard'
 import { AddBlog } from './pages/dashboard/AddBlog'
 import { CategoryPage } from './pages/categories'
+import { AuthorPage } from './pages/author'
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
           {
             path: '/categories',
             element: <CategoryPage />,
+          },
+          {
+            path: '/author',
+            element: <AuthorPage />,
           },
         ],
       },
