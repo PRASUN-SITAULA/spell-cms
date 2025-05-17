@@ -1,16 +1,5 @@
 {
-  "posts": [
-    {
-      "id": 1,
-      "title": "My First Blog Post",
-      "body": "This is the content of my first blog post.",
-      "authorId": 1,
-      "categoryId": 1,
-      "tags": ["tech", "news"],
-      "status": "published",
-      "createdAt": "2023-05-15T10:30:00Z"
-    }
-  ],
+  "posts": [],
   "categories": [
     {
       "title": "Technology",
@@ -19,10 +8,10 @@
   ],
   "authors": [
     {
-      "id": 1,
-      "name": "John Doe",
-      "avatar": "url_to_avatar_image",
-      "bio": "A passionate writer."
+      "name": "Prasun Sitaula",
+      "avatar": "blob:http://localhost:5173/6a1a2563-d5c2-4b96-b946-556a3360a74a",
+      "bio": "I am prasun sitaula",
+      "id": 2
     }
   ]
 }

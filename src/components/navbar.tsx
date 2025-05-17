@@ -8,7 +8,7 @@ export const Navbar = () => {
   const navbarItems = [
     { title: 'Dashboard', path: '/' },
     { title: 'Categories', path: '/categories' },
-    { title: 'Profile', path: '/profile' },
+    { title: 'Author', path: '/author' },
   ]
   return (
     <nav className="w-full bg-white px-4 py-3">
