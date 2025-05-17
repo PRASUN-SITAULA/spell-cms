@@ -4,18 +4,18 @@ export function SubmitButton({
   pendingText,
   ...props
 }: {
-  children: string;
-  pending?: boolean;
-  pendingText?: string;
+  children: string
+  pending?: boolean
+  pendingText?: string
 }) {
   return (
     <button
       type="submit"
       disabled={pending}
       {...props}
-      className="bg-purple-600 text-white px-4 py-1 rounded-lg font-bold cursor-pointer hover:bg-purple-500"
+      className="cursor-pointer rounded-lg bg-purple-600 px-4 py-1 font-bold text-white hover:bg-purple-500"
     >
       {pending ? pendingText : children}
     </button>
-  );
+  )
 }
