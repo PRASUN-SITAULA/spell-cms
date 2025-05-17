@@ -25,7 +25,7 @@ describe('AddCategoryForm', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockMutate.mockImplementation(({ onSuccess }) => {
+    mockMutate.mockImplementation((data, { onSuccess }) => {
       onSuccess()
     })
   })
