@@ -2,7 +2,7 @@ import { apiClient } from '../client'
 
 export const getBlogs = async () => {
   try {
-    const response = await apiClient.get('/blogs')
+    const response = await apiClient.get('/posts')
     return response.data
   } catch (error) {
     console.error(error)
@@ -18,7 +18,7 @@ export const createBlog = async (data: {
   author: string[]
 }) => {
   try {
-    const response = await apiClient.post('/blogs', data)
+    const response = await apiClient.post('/posts', data)
     return response.data
   } catch (error) {
     console.error(error)

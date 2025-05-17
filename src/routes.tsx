@@ -5,6 +5,7 @@ import { PrivateRoute, PublicRoute } from '@/lib/utils/routeGuards'
 import MainLayout from './layouts/MainLayout'
 import { Dashboard } from './pages/dashboard/Dashboard'
 import { AddBlog } from './pages/dashboard/AddBlog'
+import { CategoryPage } from './pages/categories'
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
           {
             path: '/add-blogs',
             element: <AddBlog />,
+          },
+          {
+            path: '/categories',
+            element: <CategoryPage />,
           },
         ],
       },
