@@ -10,7 +10,7 @@ import { CategorySchema } from '@/lib/schema/CategorySchema'
 import type { Category } from '@/lib/types/Category'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { Edit, Trash2, Type } from 'lucide-react'
+import { Edit, Trash2, Save, X, Type } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useForm } from 'react-hook-form'
@@ -86,19 +86,24 @@ export const CategoryPage = () => {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <div className="mx-auto max-w-lg rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-6 text-2xl font-bold text-gray-800">Categories</h2>
-        <AddCategoryForm />
-        <div className="mt-6">
-          <h3 className="mb-3 text-lg font-medium text-gray-700">
+      <div className="mx-auto max-w-2xl rounded-xl bg-white p-8 shadow-lg">
+        <h2 className="mb-6 text-3xl font-bold text-purple-700">Categories</h2>
+
+        <div className="mb-8">
+          <AddCategoryForm />
+        </div>
+
+        <div>
+          <h3 className="mb-4 text-xl font-semibold text-gray-800">
             Category List
           </h3>
+
           {isLoading ? (
             <ul className="divide-y divide-gray-200">
               {[...Array(3)].map((_, i) => (
                 <li
                   key={i}
-                  className="flex animate-pulse items-center justify-between py-3"
+                  className="mb-3 flex animate-pulse items-center justify-between rounded-lg bg-gray-50 px-4 py-4"
                 >
                   <div className="h-4 w-32 rounded bg-gray-200"></div>
                   <div className="flex gap-2">
@@ -111,55 +116,59 @@ export const CategoryPage = () => {
           ) : categories.length === 0 ? (
             <p className="text-gray-500 italic">No categories added yet.</p>
           ) : (
-            <ul className="divide-y divide-gray-200">
+            <ul className="space-y-4">
               {categories.map((category: Category) => (
                 <li
                   key={category.id}
-                  className="flex items-center justify-between py-3"
+                  className="flex items-start justify-between rounded-lg bg-gray-50 px-4 py-4 shadow-sm transition hover:shadow-md"
                 >
                   {editingCategory && editingCategory.id === category.id ? (
                     <form
                       onSubmit={handleSubmit(handleSaveEdit)}
-                      className="flex w-full items-center"
+                      className="flex w-full flex-col gap-3"
                     >
-                      <div className="flex w-full items-end space-x-2">
-                        <div className="flex w-full flex-col gap-2">
-                          <FormField
-                            label="Title"
-                            id="title"
-                            register={register('title')}
-                            error={errors.title}
-                            Icon={Type}
-                          />
-                          <div className="flex space-x-2">
-                            <button className="rounded bg-purple-600 px-2 py-1 text-sm text-white hover:bg-blue-600">
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="rounded bg-gray-300 px-2 py-1 text-sm hover:bg-gray-400"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
+                      <FormField
+                        label="Title"
+                        id="title"
+                        register={register('title')}
+                        error={errors.title}
+                        Icon={Type}
+                      />
+                      <div className="flex gap-3">
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-1 rounded bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700"
+                        >
+                          <Save size={16} />
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          type="button"
+                          className="inline-flex items-center gap-1 rounded bg-gray-300 px-3 py-1 text-sm hover:bg-gray-400"
+                        >
+                          <X size={16} />
+                          Cancel
+                        </button>
                       </div>
                     </form>
                   ) : (
                     <>
-                      <span className="text-gray-800">{category.title}</span>
+                      <span className="text-lg text-gray-800">
+                        {category.title}
+                      </span>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(category)}
-                          className="cursor-pointer"
+                          className="inline-flex cursor-pointer items-center justify-center rounded-full p-1 text-purple-600 hover:bg-purple-100"
                         >
-                          <Edit className="h-5 w-5 text-purple-600" />
+                          <Edit className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(category.id)}
-                          className="cursor-pointer"
+                          className="inline-flex cursor-pointer items-center justify-center rounded-full p-1 text-red-600 hover:bg-red-100"
                         >
-                          <Trash2 className="h-5 w-5 text-red-600" />
+                          <Trash2 className="h-5 w-5" />
                         </button>
                       </div>
                     </>
