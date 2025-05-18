@@ -121,3 +121,4 @@ Tests for the category creation form, covering successful submissions and valida
 ![Image](https://github.com/user-attachments/assets/e69a0d1d-4333-47de-9e7b-99b766771f0b)
 ![Image](https://github.com/user-attachments/assets/4359f9f7-cbdc-4864-bcf0-aa142f4e9673)
 ![Image](https://github.com/user-attachments/assets/0fc621c8-5ce5-4adf-a4e8-c7b97f33768c)
+![Image](https://github.com/user-attachments/assets/b14ce252-5825-4b1b-a7f1-8bdeced2610f)
